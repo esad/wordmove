@@ -27,9 +27,15 @@ module Wordmove
     end
 
     def replace_domain!
-      source_domain = URI(source_config[:vhost]).host
-      dest_domain = URI(dest_config[:vhost]).host
-      replace_field!(source_domain, dest_domain)
+      args = [source_config[:vhost], dest_config[:vhost]].map do |vh|
+        u = URI(vh)
+        if u.port != 80
+          "#{u.host}:#{u.port}"
+        else
+          u.host
+        end
+      end
+      replace_field!(*args)
     end
 
     def replace_wordpress_path!
